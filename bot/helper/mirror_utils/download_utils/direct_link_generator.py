@@ -87,12 +87,10 @@ def yandex_disk(url: str) -> str:
     try:
         link = re.findall(r'\bhttps?://.*yadi\.sk\S+', url)[0]
     except IndexError:
-        reply = "`No Yandex.Disk links found`\n"
-        return reply
+        return "`No Yandex.Disk links found`\n"
     api = 'https://cloud-api.yandex.net/v1/disk/public/resources/download?public_key={}'
     try:
-        dl_url = requests.get(api.format(link)).json()['href']
-        return dl_url
+        return requests.get(api.format(link)).json()['href']
     except KeyError:
         raise DirectDownloadLinkException("`Error: File not found / Download limit reached`\n")
 
@@ -112,8 +110,7 @@ def cm_ru(url: str) -> str:
         data = json.loads(result)
     except json.decoder.JSONDecodeError:
         raise DirectDownloadLinkException("`Error: Can't extract the link`\n")
-    dl_url = data['download']
-    return dl_url
+    return data['download']
 
 
 def mediafire(url: str) -> str:
@@ -124,8 +121,7 @@ def mediafire(url: str) -> str:
         raise DirectDownloadLinkException("`No MediaFire links found`\n")
     page = BeautifulSoup(requests.get(link).content, 'lxml')
     info = page.find('a', {'aria-label': 'Download file'})
-    dl_url = info.get('href')
-    return dl_url
+    return info.get('href')
 
 
 def uptobox(url: str) -> str:
@@ -136,7 +132,7 @@ def uptobox(url: str) -> str:
     if UPTOBOX_TOKEN is None:
         logging.error('UPTOBOX_TOKEN not provided!')
     else:
-        check = 'https://uptobox.com/api/user/me?token=%s' % (UPTOBOX_TOKEN)
+        check = f'https://uptobox.com/api/user/me?token={UPTOBOX_TOKEN}'
         request = requests.get(check)
         info = request.json()
         premium = info["data"]["premium"]
@@ -147,22 +143,24 @@ def uptobox(url: str) -> str:
         except:
             if premium == 1:
                 file_id = re.findall(r'\bhttps?://.*uptobox\.com/(\w+)', url)[0]
-                file_link = 'https://uptobox.com/api/link?token=%s&file_code=%s' % (UPTOBOX_TOKEN, file_id)
+                file_link = f'https://uptobox.com/api/link?token={UPTOBOX_TOKEN}&file_code={file_id}'
+
                 req = requests.get(file_link)
                 result = req.json()
-                dl_url = result['data']['dlLink']
             else:
                 file_id = re.findall(r'\bhttps?://.*uptobox\.com/(\w+)', url)[0]
-                file_link = 'https://uptobox.com/api/link?token=%s&file_code=%s' % (UPTOBOX_TOKEN, file_id)
+                file_link = f'https://uptobox.com/api/link?token={UPTOBOX_TOKEN}&file_code={file_id}'
+
                 req = requests.get(file_link)
                 result = req.json()
                 waiting_time = result["data"]["waiting"] + 1
                 waiting_token = result["data"]["waitingToken"]
                 _countdown(waiting_time)
-                file_link = 'https://uptobox.com/api/link?token=%s&file_code=%s&waitingToken=%s' % (UPTOBOX_TOKEN, file_id, waiting_token)
+                file_link = f'https://uptobox.com/api/link?token={UPTOBOX_TOKEN}&file_code={file_id}&waitingToken={waiting_token}'
+
                 req = requests.get(file_link)
                 result = req.json()
-                dl_url = result['data']['dlLink']
+            dl_url = result['data']['dlLink']
     return dl_url
 
 
@@ -193,8 +191,7 @@ def github(url: str) -> str:
         raise DirectDownloadLinkException("`No GitHub Releases links found`\n")
     download = requests.get(url, stream=True, allow_redirects=False)
     try:
-        dl_url = download.headers["location"]
-        return dl_url
+        return download.headers["location"]
     except KeyError:
         raise DirectDownloadLinkException("`Error: Can't extract the link`\n")
 
@@ -216,8 +213,6 @@ def fembed(link: str) -> str:
     Based on https://github.com/breakdowns/slam-mirrorbot """
     bypasser = lk21.Bypass()
     dl_url=bypasser.bypass_fembed(link)
-    lst_link = []
     count = len(dl_url)
-    for i in dl_url:
-        lst_link.append(dl_url[i])
+    lst_link = [dl_url[i] for i in dl_url]
     return lst_link[count-1]

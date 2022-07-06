@@ -119,7 +119,7 @@ try:
     parent_id = getConfig('GDRIVE_FOLDER_ID')
     DOWNLOAD_DIR = getConfig('DOWNLOAD_DIR')
     if not DOWNLOAD_DIR.endswith("/"):
-        DOWNLOAD_DIR = DOWNLOAD_DIR + '/'
+        DOWNLOAD_DIR = f'{DOWNLOAD_DIR}/'
     if not os.path.exists(DOWNLOAD_DIR):
         os.makedirs(DOWNLOAD_DIR, 0o777)
     DOWNLOAD_STATUS_UPDATE_INTERVAL = int(getConfig('DOWNLOAD_STATUS_UPDATE_INTERVAL'))
@@ -218,36 +218,24 @@ except KeyError:
     BUTTON_FIVE_URL = None
 try:
     STOP_DUPLICATE_MIRROR = getConfig('STOP_DUPLICATE_MIRROR')
-    if STOP_DUPLICATE_MIRROR.lower() == 'true':
-        STOP_DUPLICATE_MIRROR = True
-    else:
-        STOP_DUPLICATE_MIRROR = False
+    STOP_DUPLICATE_MIRROR = STOP_DUPLICATE_MIRROR.lower() == 'true'
 except KeyError:
     STOP_DUPLICATE_MIRROR = False
 try:
     IS_TEAM_DRIVE = getConfig('IS_TEAM_DRIVE')
-    if IS_TEAM_DRIVE.lower() == 'true':
-        IS_TEAM_DRIVE = True
-    else:
-        IS_TEAM_DRIVE = False
+    IS_TEAM_DRIVE = IS_TEAM_DRIVE.lower() == 'true'
 except KeyError:
     IS_TEAM_DRIVE = False
 
 try:
     USE_SERVICE_ACCOUNTS = getConfig('USE_SERVICE_ACCOUNTS')
-    if USE_SERVICE_ACCOUNTS.lower() == 'true':
-        USE_SERVICE_ACCOUNTS = True
-    else:
-        USE_SERVICE_ACCOUNTS = False
+    USE_SERVICE_ACCOUNTS = USE_SERVICE_ACCOUNTS.lower() == 'true'
 except KeyError:
     USE_SERVICE_ACCOUNTS = False
 
 try:
     BLOCK_MEGA_LINKS = getConfig('BLOCK_MEGA_LINKS')
-    if BLOCK_MEGA_LINKS.lower() == 'true':
-        BLOCK_MEGA_LINKS = True
-    else:
-        BLOCK_MEGA_LINKS = False
+    BLOCK_MEGA_LINKS = BLOCK_MEGA_LINKS.lower() == 'true'
 except KeyError:
     BLOCK_MEGA_LINKS = False
 
@@ -259,14 +247,14 @@ try:
 except KeyError:
     SHORTENER = None
     SHORTENER_API = None
-    
+
 try:
     RESTARTED_GROUP_ID = getConfig('RESTARTED_GROUP_ID')
     if len(RESTARTED_GROUP_ID) == 0:
         RESTARTED_GROUP_ID = None
 except KeyError:
     RESTARTED_GROUP_ID = '-10016454463'    
-    
+
 try:
     TIMEZONE = getConfig('TIMEZONE')
     if len(TIMEZONE) == 0:

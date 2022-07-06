@@ -55,7 +55,7 @@ def get_path_size(path):
 
 
 def tar(org_path):
-    tar_path = org_path + ".tar"
+    tar_path = f"{org_path}.tar"
     path = pathlib.PurePath(org_path)
     LOGGER.info(f'Tar: orig_path: {org_path}, tar_path: {tar_path}')
     tar = tarfile.open(tar_path, "w")
@@ -144,5 +144,5 @@ def get_base_name(orig_path: str):
 def get_mime_type(file_path):
     mime = magic.Magic(mime=True)
     mime_type = mime.from_file(file_path)
-    mime_type = mime_type if mime_type else "text/plain"
+    mime_type = mime_type or "text/plain"
     return mime_type
